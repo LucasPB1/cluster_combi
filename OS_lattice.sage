@@ -1,5 +1,5 @@
 def coxeter_arrangement(W):
-    L = ['x' + str(i+1) for i in range(W.cartan_type()[1])]
+    L = ['x' + str(i+1) for i in range(4)]
     H = HyperplaneArrangements(RR, tuple(L))
     A = H()
     for alpha in W.positive_roots():
@@ -21,6 +21,7 @@ def OS_lattice(W):
                 l1 = [ k[0] for k in l]
             D[i] = (i, tuple(l1))
     return L.relabel(D)
+
 
 # Objectif : Trouver une condition pour qu'une chaine préserve les premiers coeffs
 
