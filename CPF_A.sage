@@ -91,6 +91,15 @@ def facets_count(n, d, perm): # compte les facettes du complexe des points fixes
 
     else :
         return 1 # semble marcher
+
+# Maintenant on gère les non-facettes :
+
+def smaller_min(L1,L2): # l'ordre total sur les cycles de perm
+    return min(L1) <= min(L2)
+
+
+
+
             
 
         
