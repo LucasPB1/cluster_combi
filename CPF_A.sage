@@ -97,7 +97,32 @@ def facets_count(n, d, perm): # compte les facettes du complexe des points fixes
 def smaller_min(L1,L2): # l'ordre total sur les cycles de perm
     return min(L1) <= min(L2)
 
+# L'idée est de générer des permutations telles que chaque face est facette pour
+# exactement une de ces permutations. On en génère une partie et on compte avec
+# une multiplicité d^k où k = n - rk (pour compter les d possibilités de fusion de
+# polygones non centraux)
 
+def fusion_non_d_cycles(d,perm): # fusionne les cycles de taille non div par d
+    L = []
+    non_d = []
+    for i in perm :
+        if len(i)%d == 0 :
+            L.append(i)
+        else :
+            non_d += i
+    L.append(non_d)
+    return L
+
+
+
+def partitions_blocks(perm,k): # donne les partitions à k blocs que l'on va utiliser
+    return list(set_partition_iterator_blocks(perm,k))
+
+def partition_to_permutation(part): # partition -> permutation
+    perm = []
+    for i in part:
+        perm += fusion(i) # construire fonction fusion
+    return perm
 
 
             
