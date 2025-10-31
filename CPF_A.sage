@@ -153,6 +153,7 @@ def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des point
     k_types = partitions_blocks(fusion_non_d_cycles(d,perm),k+2)
     res = 0
     for i in k_types :
+        #print(i)
         res += facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d) # appliquer un facteur d^k à trouver
     #for i in k_types:
        # print(i)
