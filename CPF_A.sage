@@ -159,6 +159,16 @@ def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des point
        # print(i)
     return res
 
+def euler_char(n,d,perm):
+    res = 0
+    tmp = 1
+    i = 0
+    while tmp != 0 :
+        tmp = k_simplices(n,i,d,perm)
+        res += (-1)^(i) * tmp
+        i+=1
+    return res
+
 
 
             
