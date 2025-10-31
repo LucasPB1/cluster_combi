@@ -99,8 +99,8 @@ def smaller_min(L1,L2): # l'ordre total sur les cycles de perm
 
 # L'idée est de générer des permutations telles que chaque face est facette pour
 # exactement une de ces permutations. On en génère une partie et on compte avec
-# une multiplicité d^k où k = n - rk (pour compter les d possibilités de fusion de
-# polygones non centraux)
+# une multiplicité d^k où k est le nombre de fusions de blocs de taille d (pour
+# compter les d possibilités de fusion de polygones non centraux)
 
 def fusion_non_d_cycles(d,perm): # fusionne les cycles de taille non div par d
     L = []
@@ -113,16 +113,37 @@ def fusion_non_d_cycles(d,perm): # fusionne les cycles de taille non div par d
     L.append(non_d)
     return L
 
-
+def indice_min(L): # retourne l'indice du min de L
+    i = 0
+    for j in range(len(L)):
+        if smaller_min(L[j],L[i]):
+            i = j
+    return i
 
 def partitions_blocks(perm,k): # donne les partitions à k blocs que l'on va utiliser
     return list(set_partition_iterator_blocks(perm,k))
 
+def fusion(L): # fusionne les cycles du bloc
+    cycle = []
+    while L != []:
+        i = indice_min(L)
+        cycle += L.pop(i)
+    return cycle
+
 def partition_to_permutation(part): # partition -> permutation
     perm = []
     for i in part:
-        perm += fusion(i) # construire fonction fusion
+        perm += [fusion(i)] # construire fonction fusion
     return perm
+
+def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des points fixes
+    k_types = partitions_blocks(fusion_non_d_cycles(d,perm),k+2)
+    res = 0
+    for i in k_types :
+        res += facets_count(n,d,partition_to_permutation(i)) # appliquer un facteur d^k à trouver
+    for i in k_types:
+        print(i)
+
 
 
             
