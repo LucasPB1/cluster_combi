@@ -136,13 +136,27 @@ def partition_to_permutation(part): # partition -> permutation
         perm += [fusion(i)] # construire fonction fusion
     return perm
 
+def is_d_cycle(L,d):
+    for i in L :
+        if len(i)%d != 0:
+            return false
+    return true
+
+def d_factor(part,d):
+    res = 1
+    for i in part :
+        if is_d_cycle(i,d):
+            res = res * d^(len(i))
+    return res
+
 def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des points fixes
     k_types = partitions_blocks(fusion_non_d_cycles(d,perm),k+2)
     res = 0
     for i in k_types :
-        res += facets_count(n,d,partition_to_permutation(i)) # appliquer un facteur d^k à trouver
-    for i in k_types:
-        print(i)
+        res += facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d) # appliquer un facteur d^k à trouver
+    #for i in k_types:
+       # print(i)
+    return res
 
 
 
