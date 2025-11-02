@@ -51,26 +51,28 @@ def count_stable_dissections(n,d, parabolic_type): # compte les faces stables pa
 
 
 def supp_above(i,L): # supprime les valeurs L[j] = L[i] si j > i
+    L1 = L.copy()
     if len(L)<= i+1:
-        return L
+        return L1
     else :
-        for j in range (len(L)-1,i, -1):
-            if L[j] == L[i]:
-                L.pop(j)
-        return L #marche
+        for j in range (len(L1)-1,i, -1):
+            if L1[j] == L1[i]:
+                L1.pop(j)
+        return L1 #marche
 
 
 def polygons_count_by_size(L): # compte le nombre de polygones de chaque taille
     i = 0
     count = 0
     c = []
-    while i != len(L):
-        for j in range(i,len(L)):
-            if L[i] == L[j]:
+    L1 = L.copy()
+    while i != len(L1):
+        for j in range(i,len(L1)):
+            if L1[i] == L1[j]:
                 count += 1
         c.append(count)
         count = 0
-        supp_above(i,L)
+        L1 = supp_above(i,L1)
         i = i+1
     return c # marche
 
@@ -80,8 +82,8 @@ def facets_count(n, d, perm): # compte les facettes du complexe des points fixes
         L = parabolic_type_facets(d,perm)
         facets = count_stable_dissections(n,d,L)
         #print(facets)
-        L.pop()
-        for i in polygons_count_by_size(L) : # On considère uniquement les polygones non-centraux
+        L.pop() # On considère uniquement les polygones non-centraux
+        for i in polygons_count_by_size(L) :
             #print(polygons_count_by_size(L))
             #print(facets)
             #print(i/d)
@@ -125,9 +127,10 @@ def partitions_blocks(perm,k): # donne les partitions à k blocs que l'on va uti
 
 def fusion(L): # fusionne les cycles du bloc
     cycle = []
-    while L != []:
-        i = indice_min(L)
-        cycle += L.pop(i)
+    L1 = L.copy()
+    while L1 != []:
+        i = indice_min(L1)
+        cycle += L1.pop(i)
     return cycle
 
 def partition_to_permutation(part): # partition -> permutation
@@ -146,23 +149,26 @@ def d_factor(part,d):
     res = 1
     for i in part :
         if is_d_cycle(i,d):
-            res = res * d^(len(i))
+            l = len(i)-1
+            #print(l)
+            res = res * d^(l)
     return res
 
 def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des points fixes
     k_types = partitions_blocks(fusion_non_d_cycles(d,perm),k+2)
     res = 0
     for i in k_types :
+        #d1 = d_factor(i,d)
+        #print(d_factor(i,d))
+        #tmp = (facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d))
+        res += facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d)
         #print(i)
-        res += facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d) # appliquer un facteur d^k à trouver
-    #for i in k_types:
-       # print(i)
     return res
 
 def euler_char(n,d,perm):
     res = 0
     tmp = 1
-    i = 0
+    i = -1
     while tmp != 0 :
         tmp = k_simplices(n,i,d,perm)
         res += (-1)^(i) * tmp
