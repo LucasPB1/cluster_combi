@@ -32,7 +32,8 @@ def parabolic_type_facets(d,perm): # donne le type parabolique des facettes sous
             L += [len(i)/d]*d
         else :
             k += len(i)
-    L.append(k)
+    if k != 0 :
+        L.append(k)
     return L # marche
 
 def count_stable_dissections(n,d, parabolic_type): # compte les faces stables par R_d
@@ -66,11 +67,13 @@ def polygons_count_by_size(L): # compte le nombre de polygones de chaque taille
     count = 0
     c = []
     L1 = L.copy()
+    #print(L1)
     while i != len(L1):
         for j in range(i,len(L1)):
             if L1[i] == L1[j]:
                 count += 1
         c.append(count)
+        #print(c)
         count = 0
         L1 = supp_above(i,L1)
         i = i+1
@@ -80,9 +83,11 @@ def polygons_count_by_size(L): # compte le nombre de polygones de chaque taille
 def facets_count(n, d, perm): # compte les facettes du complexe des points fixes
     if is_not_trivial_facet(n,d,perm):
         L = parabolic_type_facets(d,perm)
+        #print(L)
         facets = count_stable_dissections(n,d,L)
         #print(facets)
-        L.pop() # On considère uniquement les polygones non-centraux
+        if d != 2 : # temporaire
+            L.pop() # On considère uniquement les polygones non-centraux
         for i in polygons_count_by_size(L) :
             #print(polygons_count_by_size(L))
             #print(facets)
@@ -97,7 +102,9 @@ def facets_count(n, d, perm): # compte les facettes du complexe des points fixes
 # Maintenant on gère les non-facettes :
 
 def smaller_min(L1,L2): # l'ordre total sur les cycles de perm
-    return min(L1) <= min(L2)
+    #print(L1)
+    #print(L2)
+    return (min(L1) <= min(L2))
 
 # L'idée est de générer des permutations telles que chaque face est facette pour
 # exactement une de ces permutations. On en génère une partie et on compte avec
@@ -112,12 +119,15 @@ def fusion_non_d_cycles(d,perm): # fusionne les cycles de taille non div par d
             L.append(i)
         else :
             non_d += i
-    L.append(non_d)
+    if non_d != []:
+        L.append(non_d)
     return L
 
 def indice_min(L): # retourne l'indice du min de L
     i = 0
     for j in range(len(L)):
+        #print(L[j])
+        #print(L[i])
         if smaller_min(L[j],L[i]):
             i = j
     return i
@@ -128,7 +138,9 @@ def partitions_blocks(perm,k): # donne les partitions à k blocs que l'on va uti
 def fusion(L): # fusionne les cycles du bloc
     cycle = []
     L1 = L.copy()
+    #print(L1)
     while L1 != []:
+        #print(L1)
         i = indice_min(L1)
         cycle += L1.pop(i)
     return cycle
@@ -136,6 +148,7 @@ def fusion(L): # fusionne les cycles du bloc
 def partition_to_permutation(part): # partition -> permutation
     perm = []
     for i in part:
+        #print(i)
         perm += [fusion(i)] # construire fonction fusion
     return perm
 
@@ -156,11 +169,15 @@ def d_factor(part,d):
 
 def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des points fixes
     k_types = partitions_blocks(fusion_non_d_cycles(d,perm),k+2)
+    #for i in k_types:
+        #print(i)
     res = 0
     for i in k_types :
+        #print(i)
         #d1 = d_factor(i,d)
         #print(d_factor(i,d))
-        #tmp = (facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d))
+        tmp = (facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d))
+        #print(tmp)
         res += facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d)
         #print(i)
     return res
@@ -175,6 +192,42 @@ def euler_char(n,d,perm):
         i+=1
     return res
 
+def f_vector(n,d,perm):
+    res = []
+    i = -1
+    tmp = 1
+    while tmp != 0:
+        tmp = k_simplices(n,i,d,perm)
+        res += [tmp]
+        i += 1
+    if res[len(res)-1] == 0:
+        res.pop()
+    return res
+
+def h_k(f_vect,k): # renvoie k-ieme composante h_vect
+    res = 0
+    for i in range(k+1):
+        res += (-1)^(k-i) * multinomial([k-i, len(f_vect) - 1 - k]) * f_vect[i]
+    return res
+
+def h_vector(n,d,perm):
+    f_vect = f_vector(n,d,perm)
+    dim = len(fusion_non_d_cycles(d,perm))-1
+    h_vect = []
+    for i in range(dim+1):
+        h_vect += [h_k(f_vect,i)]
+    return h_vect
+
+def coincides(n,d,perm): # teste si (n+1)^mu et h_max coincident
+    mu = 0
+    for i in perm:
+        if len(i)%d == 0:
+            mu+=1
+    twisted_euler = (n+1)^(mu)
+    f_vect = f_vector(n,d,perm)
+    h_max = h_k(f_vect, len(f_vect)-1)
+    #print(h_max)
+    return (twisted_euler == h_max)
 
 
             
