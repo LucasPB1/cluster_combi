@@ -175,7 +175,7 @@ def k_simplices(n,k,d,perm): # compte les k-simplexes du sous-complexe des point
     for i in k_types :
         #print(i)
         #d1 = d_factor(i,d)
-        #print(d_factor(i,d))
+        print(d_factor(i,d))
         tmp = (facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d))
         #print(tmp)
         res += facets_count(n,d,partition_to_permutation(i)) * d_factor(i,d)
@@ -228,6 +228,65 @@ def coincides(n,d,perm): # teste si (n+1)^mu et h_max coincident
     h_max = h_k(f_vect, len(f_vect)-1)
     #print(h_max)
     return (twisted_euler == h_max)
+
+def block_reunion(L):
+    part = set()
+    for i in range(len(L)-1):
+        for j in range(i+1,len(L)):
+            L1 = tuple([L[k] for k in range(i)] + [L[i]+L[j]] + [L[k] for k in range(i+1,len(L)) if k != j])
+            part.add(L1)
+    return part
+
+def int_to_set(P):
+    i = 1
+    S = []
+    for j in P:
+        S.append([i+k for k in range(j)])
+        i += j
+    return tuple(S)
+
+def gen_int_part(n): # génère avec certaines répétitions
+    S = [1 for i in range(n)]
+    part = {tuple(S)}
+    tmp = {tuple(S)}
+    while len(tmp)!=0:
+        for l in list(tmp):
+            part = part.union(block_reunion(l))
+            tmp = tmp.union(block_reunion(l))
+            tmp.remove(l)
+    return part
+
+
+
+def test(n,d):
+    S = [i for i in range(1,n+1)]
+    #L = list(set_partition_iterator_blocks(S,k))
+    L = gen_int_part(n)
+    for l in L:
+        p = int_to_set(l)
+        print(coincides(n,d,p))
+
+def alt_i_minus_1_simplices(n,d,i,mu):
+    tot = (d^i * falling_factorial(((n+2)/d) +i -1, i))
+    sum = 0
+    for k in range(mu):
+        sum += binomial(mu, k + i) * stirling_number2(k+i,i) * d^k
+    return tot*sum
+
+def alt_euler_char(n,d,mu):
+    eul = 0
+    for i in range(mu+1):
+        eul += (-1)^(i-1) * alt_i_minus_1_simplices(n,d,i,mu)
+    return eul
+
+def alt_f_vector(n,d,mu):
+    f = []
+    for i in range(mu+1):
+        f += [alt_i_minus_1_simplices(n,d,i,mu)]
+    return f
+
+        
+    
 
 
             
