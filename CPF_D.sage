@@ -46,8 +46,22 @@ def not_trivial_subcomplex(d,m,perm): # détermine si le complexe des points fix
 
 
 
-def max_parabolic_type(d,m,part): # donne la partition d'entier correspondant au type parabolique max
+def max_parabolic_type(d,m,part): # donne la partition d'entier correspondant au(x) type(s) parabolique max
+    typ = []
     if not_trivial_subcomplex(d,m,perm):
+        if d % 2 == 0 :
+            for i in part :
+                if i[1] and i[0] % d/2 == 0:
+                    typ += (d/2) * [i[0] / (d/2)]
+        else :
+            for i in part :
+                if not(i[1]) and i[0] % d == 0 :
+                    typ += d * [i[0] / d]
+    return typ
+
+def facets_count(d,m,part):
+    return
+
 
 
     
