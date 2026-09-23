@@ -1,3 +1,8 @@
+# Pour utiliser ce fichier, notez que :
+# - perm est une permutation de type D_n représentée en cycles disjoints
+# - max_parabolic_type représente la structure en sous-gones, pas le type parabolique
+
+
 def coxeter_rk(perm): # Calcule le rang de Coxeter du groupe qui contient perm
     l = 0
     for i in perm :
@@ -24,6 +29,23 @@ def cycles(perm): # Donne la structure en cycles [] et (()) d'une permutation de
                 l = [-j for j in i]
                 perm2.remove(l)
     return part
+
+def has_diameters(d,m,part):
+    n = 0
+    for i in part :
+        n += i[0]
+    if n % d != 0 :
+        return False
+    if d%2 == 1 :
+        for i in part :
+            if i[0] % d != 0 or i[1] :
+                return False
+        return True
+    else :
+        for i in part :
+            if i[0] % (d/2) != 0 or not(i[1]):
+                return False
+        return True
             
 
 
@@ -60,7 +82,14 @@ def max_parabolic_type(d,m,part): # donne la partition d'entier correspondant au
     return typ
 
 def facets_count(d,m,part):
-    return
+    if not_trivial_subcomplex(d,m,part):
+        if has_diameters(d,m,part):
+            return # type D
+        else :
+            return # type B
+    else :
+        return 1
+    
 
 
 
