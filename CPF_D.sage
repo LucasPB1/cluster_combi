@@ -9,6 +9,15 @@ def coxeter_rk(perm): # Calcule le rang de Coxeter du groupe qui contient perm
         l += len(i)
     return l /2
 
+def multinomial(L):
+    sum = 0
+    for i in L :
+        sum += i
+    mult = factorial(sum)
+    for i in L :
+        mult = mult / factorial(i)
+    return mult # marche
+
 def cycles(perm): # Donne la structure en cycles [] et (()) d'une permutation de type B/D
     part = []
     perm2 = perm.copy()
@@ -81,14 +90,18 @@ def max_parabolic_type(d,m,part): # donne la partition d'entier correspondant au
                     typ += d * [i[0] / d]
     return typ
 
-def facets_count(d,m,part):
-    if not_trivial_subcomplex(d,m,part):
-        if has_diameters(d,m,part):
-            return # type D
-        else :
-            return # type B
-    else :
-        return 1
+def facets_count(d,m,part): # Suppose que l'on est dans le cas où il existe des diamètres
+    l = 0
+    n = 0
+    if d % 2 == 0 :
+         d = d/2
+    for i in part :
+        l += 1
+        n += i[0]
+    return (2 * factorial((m*(n-1)+1)/d + l/d - 1) / factorial((m*(n-1)+1)/d - 1))
+    
+    
+    
     
 
 
