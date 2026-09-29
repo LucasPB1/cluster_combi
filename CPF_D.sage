@@ -50,9 +50,9 @@ def has_diameters(d,m,part):
             if i[0] % d != 0 or i[1] :
                 return False
         return True
-    else :
+    else : 
         for i in part :
-            if i[0] % (d/2) != 0 or not(i[1]):
+            if (i[0] % (d/2) != 0 and i[1]) or (i[0] % d != 0 and not(i[1])): # A checker
                 return False
         return True
             
@@ -64,14 +64,14 @@ def not_trivial_subcomplex(d,m,perm): # détermine si le complexe des points fix
         return False
     else :
         part = cycles(perm)
-        if d % 2 == 1 :
+        if d % 2 == 1 : # A modifier
             for i in part:
                 if not(i[1]) and i % d == 0 :
                     return True
             return False
         else :
             for i in part:
-                if i[1] and i % d/2 == 0:
+                if (i[1] and i % d/2 == 0) or (not(i[1]) and i % d == 0):
                     return True
             return False
 
@@ -80,10 +80,12 @@ def not_trivial_subcomplex(d,m,perm): # détermine si le complexe des points fix
 def max_parabolic_type(d,m,part): # donne la partition d'entier correspondant au(x) type(s) parabolique max
     typ = []
     if not_trivial_subcomplex(d,m,perm):
-        if d % 2 == 0 :
+        if d % 2 == 0 : # A modifier
             for i in part :
                 if i[1] and i[0] % d/2 == 0:
                     typ += (d/2) * [i[0] / (d/2)]
+                elif not(i[1]) and i[0] % d == 0 :
+                    typ += d * [i[0] / d]
         else :
             for i in part :
                 if not(i[1]) and i[0] % d == 0 :
@@ -93,12 +95,16 @@ def max_parabolic_type(d,m,part): # donne la partition d'entier correspondant au
 def facets_count(d,m,part): # Suppose que l'on est dans le cas où il existe des diamètres
     l = 0
     n = 0
-    if d % 2 == 0 :
+    if d % 2 == 0 : # séparer cas d pair et impair
          d = d/2
     for i in part :
         l += 1
         n += i[0]
-    return (2 * factorial((m*(n-1)+1)/d + l/d - 1) / factorial((m*(n-1)+1)/d - 1))
+    return (d**(l/d) * 2 * factorial((m*(n-1)+1)/d + l/d - 1) / factorial((m*(n-1)+1)/d - 1))
+
+def euler_char : # Calcule la caractéristique d'Euler du complexe des points fixes
+    return
+
     
     
     
