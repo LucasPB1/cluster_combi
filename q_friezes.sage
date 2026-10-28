@@ -19,18 +19,16 @@ def k_sums_minus_1(L,k):
     for i in range(len(L)):
         a = 0
         for j in range(k):
-            a += L[i+j % len(L)]
+            a += L[(i+j) % len(L)]-1
         l.append(a)
     return l
 
-def q_next_row(row_a, row_b, k, quiddity): # à adapter
+def q_next_row(row_a, row_b, quiddity,k): # à adapter
     n = len(row_a)
     F = []
-    sums = k_sums_minus_1(quiddity)
-    k = 0
+    sums = k_sums_minus_1(quiddity,k)
     for i in range(n):
-        F.append((row_b[i] * row_b[(i+1) % n] - q^(k_sums_minus_1(quiddity,k)) / row_a[(i+1)%n]))
-        k += 1
+        F.append(((row_b[i] * row_b[(i+1) % n] - q^(sums[i])) / row_a[(i+1)%n]))
     return F
 
 def is_not_q_powers(L):
@@ -59,16 +57,20 @@ def CC_frieze(quiddity):
     return F
 
 def q_frieze(quiddity): # à adapter
+    F1 = CC_frieze(quiddity)
+    width = len(F1)
     one = [1 for i in quiddity]
     F = [ one, [ q_entier(i) for i in quiddity]]
     l1 = one.copy()
     l2 = [ q_entier(i) for i in quiddity]
     l = []
-    while(is_not_q_powers(l)):
-        l = next_row(l1,l2)
+    k = 1
+    while(len(F) != width):
+        l = q_next_row(l1,l2,quiddity,k)
         l1 = l2.copy()
         l2 = l.copy()
         F.append(l)
+        k += 1
     return F
 
 def see(F):
