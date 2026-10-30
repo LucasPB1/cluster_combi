@@ -73,6 +73,12 @@ def q_frieze(quiddity): # à adapter
         k += 1
     return F
 
+def triangulation(quiddity):
+    F = CC_frieze(quiddity)
+    l = [i[0] for i in F]
+    t = path_tableaux.FriezePattern(l)
+    return t.triangulation()
+
 def see(F):
     for i in range(len(F)):
         print(i*"  ", F[i])
